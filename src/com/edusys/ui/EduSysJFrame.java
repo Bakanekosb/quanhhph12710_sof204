@@ -5,13 +5,16 @@
  */
 package com.edusys.ui;
 
+import com.edusys.helper.DialogHelper;
 import com.edusys.helper.ShareHelper;
-import com.edusys.helper.XImage;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Desktop;
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Timer;
+import java.util.List;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 
 /**
  *
@@ -22,9 +25,22 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
     /**
      * Creates new form EduSysJFrame
      */
+    List<JInternalFrame> lst_component = new ArrayList<>();
+    QuanLyNguoiHocJInternalFrame qlnhJIF = new QuanLyNguoiHocJInternalFrame();
+    QuanLyNhanVienJInternalFrame qlnvJIF = new QuanLyNhanVienJInternalFrame();
+    QuanLyChuyenDeJInternalFrame qlcdJIF = new QuanLyChuyenDeJInternalFrame();
+    QuanLyKhoaHocJInternalFrame qlkhJIF = new QuanLyKhoaHocJInternalFrame();
+    QuanLyHocVienJInternalFrame qlhvJIF = new QuanLyHocVienJInternalFrame();
+    String getJIFTitle = null;
+
     public EduSysJFrame() {
         initComponents();
         init();
+        lst_component.add(qlnvJIF);
+        lst_component.add(qlnhJIF);
+        lst_component.add(qlcdJIF);
+        lst_component.add(qlkhJIF);
+        lst_component.add(qlhvJIF);
     }
 
     /**
@@ -51,7 +67,7 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
         lbl_trangThai = new javax.swing.JLabel();
         lbl_dongHo = new javax.swing.JLabel();
         jSeparator9 = new javax.swing.JSeparator();
-        jLabel2 = new javax.swing.JLabel();
+        desktopPane = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         mni_dangNhap = new javax.swing.JMenuItem();
@@ -83,6 +99,12 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(800, 700));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jToolBar1.setRollover(true);
 
@@ -103,6 +125,11 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
         btn_ketThuc.setFocusable(false);
         btn_ketThuc.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_ketThuc.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btn_ketThuc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ketThucActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btn_ketThuc);
         jToolBar1.add(jSeparator7);
 
@@ -111,6 +138,11 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
         btn_chuyenDe.setFocusable(false);
         btn_chuyenDe.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_chuyenDe.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btn_chuyenDe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_chuyenDeActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btn_chuyenDe);
 
         btn_nguoiHoc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edusys/icon/Conference.png"))); // NOI18N
@@ -142,6 +174,11 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
         btn_hocVien.setFocusable(false);
         btn_hocVien.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_hocVien.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btn_hocVien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_hocVienActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btn_hocVien);
         jToolBar1.add(jSeparator8);
 
@@ -150,6 +187,11 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
         btn_huongDan.setFocusable(false);
         btn_huongDan.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_huongDan.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btn_huongDan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_huongDanActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btn_huongDan);
 
         lbl_trangThai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edusys/icon/Info.png"))); // NOI18N
@@ -172,17 +214,15 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_trangThai)
                     .addComponent(lbl_dongHo))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel2.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edusys/icon/ongVang2.png"))); // NOI18N
-        jLabel2.setOpaque(true);
+        desktopPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        desktopPane.setLayout(new java.awt.BorderLayout());
 
         jMenu1.setText("Hệ thống");
 
@@ -209,12 +249,22 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
 
         mni_doiMatKhau.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edusys/icon/Refresh.png"))); // NOI18N
         mni_doiMatKhau.setText("Đổi mật khẩu");
+        mni_doiMatKhau.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mni_doiMatKhauActionPerformed(evt);
+            }
+        });
         jMenu1.add(mni_doiMatKhau);
         jMenu1.add(jSeparator2);
 
         mni_ketThuc.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F10, 0));
         mni_ketThuc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edusys/icon/Stop.png"))); // NOI18N
         mni_ketThuc.setText("Kết thúc");
+        mni_ketThuc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mni_ketThucActionPerformed(evt);
+            }
+        });
         jMenu1.add(mni_ketThuc);
 
         jMenuBar1.add(jMenu1);
@@ -224,11 +274,21 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
         mni_chuyenDe.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, java.awt.event.InputEvent.CTRL_MASK));
         mni_chuyenDe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edusys/icon/Lists.png"))); // NOI18N
         mni_chuyenDe.setText("Chuyên đề");
+        mni_chuyenDe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mni_chuyenDeActionPerformed(evt);
+            }
+        });
         jMenu2.add(mni_chuyenDe);
 
         mni_khoaHoc.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, java.awt.event.InputEvent.CTRL_MASK));
         mni_khoaHoc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edusys/icon/Certificate.png"))); // NOI18N
         mni_khoaHoc.setText("Khóa học");
+        mni_khoaHoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mni_khoaHocActionPerformed(evt);
+            }
+        });
         jMenu2.add(mni_khoaHoc);
 
         mni_nguoiHoc.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F3, java.awt.event.InputEvent.CTRL_MASK));
@@ -244,6 +304,11 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
         mni_hocVien.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.CTRL_MASK));
         mni_hocVien.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edusys/icon/User.png"))); // NOI18N
         mni_hocVien.setText("Học viên");
+        mni_hocVien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mni_hocVienActionPerformed(evt);
+            }
+        });
         jMenu2.add(mni_hocVien);
         jMenu2.add(jSeparator6);
 
@@ -286,11 +351,21 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
         mni_huongDan.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
         mni_huongDan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edusys/icon/Globe.png"))); // NOI18N
         mni_huongDan.setText("Hướng dẫn sử dụng");
+        mni_huongDan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mni_huongDanActionPerformed(evt);
+            }
+        });
         jMenu5.add(mni_huongDan);
         jMenu5.add(jSeparator5);
 
         mni_gioiThieu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edusys/icon/Brick house.png"))); // NOI18N
         mni_gioiThieu.setText("Giới thiệu sản phẩm");
+        mni_gioiThieu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mni_gioiThieuActionPerformed(evt);
+            }
+        });
         jMenu5.add(mni_gioiThieu);
 
         jMenuBar1.add(jMenu5);
@@ -301,29 +376,34 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+            .addComponent(desktopPane)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 581, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
+
+        desktopPane.getAccessibleContext().setAccessibleName("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_dangXuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_dangXuatActionPerformed
-        // TODO add your handling code here:
+       ShareHelper.logoff();
+        this.dispose();
+        new DangNhapJFrame().setVisible(true);
     }//GEN-LAST:event_btn_dangXuatActionPerformed
 
     private void btn_nguoiHocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nguoiHocActionPerformed
-        new QuanLyNguoiHocJFrame().setVisible(true);
+//        new QuanLyNguoiHocJFrame().setVisible(true);
+        openJInternalFrame(qlnhJIF);
     }//GEN-LAST:event_btn_nguoiHocActionPerformed
 
     private void mni_dangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_dangNhapActionPerformed
@@ -332,21 +412,91 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_mni_dangNhapActionPerformed
 
     private void mni_nguoiHocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_nguoiHocActionPerformed
-        new QuanLyNguoiHocJFrame().setVisible(true);
+        openJInternalFrame(qlnhJIF);
     }//GEN-LAST:event_mni_nguoiHocActionPerformed
 
     private void mni_dangXuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_dangXuatActionPerformed
         ShareHelper.logoff();
+        this.dispose();
         new DangNhapJFrame().setVisible(true);
     }//GEN-LAST:event_mni_dangXuatActionPerformed
 
     private void mni_nhanVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_nhanVienActionPerformed
-        new QuanLyNhanVienJFrame().setVisible(true);
+        if (ShareHelper.USER.isVaiTro()) {
+            openJInternalFrame(qlnvJIF);
+        }
+        else{
+            DialogHelper.alert(this, "Chỉ trưởng phòng mới dùng được chức năng này");
+        }
     }//GEN-LAST:event_mni_nhanVienActionPerformed
 
     private void btn_khoaHocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_khoaHocActionPerformed
-        // TODO add your handling code here:
+        openJInternalFrame(qlkhJIF);
     }//GEN-LAST:event_btn_khoaHocActionPerformed
+
+    private void mni_chuyenDeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_chuyenDeActionPerformed
+        openJInternalFrame(qlcdJIF);
+    }//GEN-LAST:event_mni_chuyenDeActionPerformed
+
+    private void mni_khoaHocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_khoaHocActionPerformed
+        openJInternalFrame(qlkhJIF);
+    }//GEN-LAST:event_mni_khoaHocActionPerformed
+
+    private void btn_chuyenDeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chuyenDeActionPerformed
+        openJInternalFrame(qlcdJIF);
+    }//GEN-LAST:event_btn_chuyenDeActionPerformed
+
+    private void btn_hocVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hocVienActionPerformed
+        openJInternalFrame(qlhvJIF);
+    }//GEN-LAST:event_btn_hocVienActionPerformed
+
+    private void btn_huongDanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_huongDanActionPerformed
+        openWebsite();
+    }//GEN-LAST:event_btn_huongDanActionPerformed
+
+    private void mni_huongDanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_huongDanActionPerformed
+        openWebsite();
+    }//GEN-LAST:event_mni_huongDanActionPerformed
+
+    private void mni_gioiThieuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_gioiThieuActionPerformed
+        new GioiThieuJDialog().setVisible(true);
+    }//GEN-LAST:event_mni_gioiThieuActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        lbl_trangThai.setText("Hệ quản lý đào tạo - Nhân viên: " + ShareHelper.USER.getHoTen());
+    }//GEN-LAST:event_formWindowOpened
+
+    private void mni_doiMatKhauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_doiMatKhauActionPerformed
+        new DoiMatKhauJDialog().setVisible(true);
+    }//GEN-LAST:event_mni_doiMatKhauActionPerformed
+
+    private void mni_ketThucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_ketThucActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_mni_ketThucActionPerformed
+
+    private void btn_ketThucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ketThucActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_btn_ketThucActionPerformed
+
+    private void mni_hocVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mni_hocVienActionPerformed
+        openJInternalFrame(qlhvJIF);
+    }//GEN-LAST:event_mni_hocVienActionPerformed
+
+    void openJInternalFrame(JInternalFrame jif) {
+        if (!ShareHelper.OPENING) {
+            desktopPane.add(jif);
+            jif.setVisible(true);
+//            jif.setSize(NORMAL,NORMAL);
+            ShareHelper.OPENING = true;
+            getJIFTitle = jif.getTitle();
+        } else {
+            if (getJIFTitle.equals(jif.getTitle())) {
+                DialogHelper.alert(this, "Chức năng bạn chọn vẫn đang mở này!");
+            } else {
+                DialogHelper.alert(this, "Hãy đóng cửa sổ " + getJIFTitle + " trước");
+            }
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -380,7 +530,6 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
             public void run() {
                 new EduSysJFrame().setVisible(false);
                 new ChaoJDialog().setVisible(true);
-
             }
         });
     }
@@ -393,7 +542,7 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
     private javax.swing.JButton btn_ketThuc;
     private javax.swing.JButton btn_khoaHoc;
     private javax.swing.JButton btn_nguoiHoc;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JDesktopPane desktopPane;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -432,7 +581,10 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
 
     private void init() {
         this.setLocationRelativeTo(null);
-        this.setIconImage(XImage.getAppIcon());
+
+//        setExtendedState(JFrame.MAXIMIZED_BOTH);
+//        desktopPane.setSize(getSize());
+        this.setIconImage(ShareHelper.APP_ICON);
         setTitle("HỆ THỐNG QUẢN LÝ ĐÀO TẠO");
         Thread th = new Thread(this);
         th.start();
@@ -445,9 +597,17 @@ public class EduSysJFrame extends javax.swing.JFrame implements Runnable {
                 Date now = new Date();
                 SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss aa");
                 String time = formater.format(now);
-                lbl_dongHo.setText(time);
+                lbl_dongHo.setText(time + " ");
             } catch (Exception e) {
             }
+        }
+    }
+
+    private void openWebsite() {
+        try {
+            Desktop.getDesktop().browse(new File("help/guide.html").toURI());
+        } catch (Exception ex) {
+            DialogHelper.alert(this, "Không tìm thấy file hướng dẫn!");
         }
     }
 }

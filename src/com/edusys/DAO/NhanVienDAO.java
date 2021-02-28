@@ -5,6 +5,7 @@
  */
 package com.edusys.DAO;
 
+import com.edusys.Interface.IEduSysDAO;
 import com.edusys.model.NhanVien;
 import com.edusys.helper.JdbcHelper;
 import java.util.ArrayList;
@@ -15,11 +16,11 @@ import java.sql.ResultSet;
  *
  * @author Dell
  */
-public class NhanVienDAO extends EduSysDAO<NhanVien, String> {
+public class NhanVienDAO implements IEduSysDAO<NhanVien, String> {
 
     @Override
     public void insert(NhanVien model) {
-        insert_sql = "INSERT INTO NhanVien (MaNV, MatKhau, HoTen, VaiTro) VALUES (?, ?, ?, ?)";
+        String insert_sql = "INSERT INTO NhanVien (MaNV, MatKhau, HoTen, VaiTro) VALUES (?, ?, ?, ?)";
         JdbcHelper.executeUpdate(insert_sql,
                 model.getMaNV(),
                 model.getMatKhau(),
@@ -29,7 +30,7 @@ public class NhanVienDAO extends EduSysDAO<NhanVien, String> {
 
     @Override
     public void update(NhanVien model) {
-        update_sql = "UPDATE NhanVien SET MatKhau=?, HoTen=?, VaiTro=? WHERE MaNV=?";
+        String update_sql = "UPDATE NhanVien SET MatKhau=?, HoTen=?, VaiTro=? WHERE MaNV=?";
         JdbcHelper.executeUpdate(update_sql,
                 model.getMatKhau(),
                 model.getHoTen(),
@@ -39,25 +40,65 @@ public class NhanVienDAO extends EduSysDAO<NhanVien, String> {
 
     @Override
     public void delete(String id) {
-        delete_sql = "DELETE FROM NhanVien WHERE MaNV=?";
+        String delete_sql = "DELETE FROM NhanVien WHERE MaNV=?";
         JdbcHelper.executeUpdate(delete_sql, id);
     }
 
     @Override
     public NhanVien selectById(String id) {
-        selectById_sql = "SELECT * FROM NhanVien WHERE MaNV=?";
+        String selectById_sql = "SELECT * FROM NhanVien WHERE MaNV=?";
         List<NhanVien> list = selectBySql(selectById_sql, id);
         return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
     public List<NhanVien> selectAll() {
-        selectAll_sql = "SELECT * FROM NhanVien";
+        String selectAll_sql = "SELECT * FROM NhanVien";
         return selectBySql(selectAll_sql);
     }
 
+    public List<NhanVien> selectByPage(int pageNumber, int rowsOfPage) {
+        List<NhanVien> list = new ArrayList<>();
+        try {
+            ResultSet rs = null;
+            try {
+                String sql = "{call SP_SELECTNHANVIEN (?,?)}";
+                rs = JdbcHelper.executeQuery(sql, pageNumber, rowsOfPage);
+                while (rs.next()) {
+                    NhanVien model = readFromResultSet(rs);
+                    list.add(model);
+                }
+            } finally {
+                rs.getStatement().getConnection().close();
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+
+        }
+        return list;
+    }
+
+    public int getTotalRow() {
+        int total = 0;
+        try {
+            String getTotalsql = "SELECT COUNT(*) TOTAL FROM NHANVIEN";
+            ResultSet rs = null;
+            try {
+                rs = JdbcHelper.executeQuery(getTotalsql);
+                while (rs.next()) {
+                    total = rs.getInt("Total");
+                }
+            } finally {
+                rs.getStatement().getConnection().close();
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        return total;
+    }
+
     @Override
-    protected List<NhanVien> selectBySql(String sql, Object... args) {
+    public List<NhanVien> selectBySql(String sql, Object... args) {
         List<NhanVien> list = new ArrayList<>();
         try {
             ResultSet rs = null;

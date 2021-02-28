@@ -57,6 +57,11 @@ public class HocVien {
     public void setDiem(double diem) {
         this.diem = diem;
     }
+
+    @Override
+    public String toString() {
+        return "HocVien{" + "maHV=" + maHV + ", maKH=" + maKH + ", maNH=" + maNH + ", diem=" + diem + '}';
+    }
     
     
 }

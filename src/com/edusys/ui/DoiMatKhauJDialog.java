@@ -5,7 +5,10 @@
  */
 package com.edusys.ui;
 
-import com.edusys.helper.XImage;
+import com.edusys.DAO.NhanVienDAO;
+import com.edusys.helper.DialogHelper;
+import com.edusys.helper.ShareHelper;
+import com.edusys.model.NhanVien;
 
 /**
  *
@@ -16,6 +19,9 @@ public class DoiMatKhauJDialog extends javax.swing.JFrame {
     /**
      * Creates new form DoiMatKhauJDialog
      */
+    NhanVienDAO nhanVienDAO = new NhanVienDAO();
+    NhanVien nv;
+
     public DoiMatKhauJDialog() {
         initComponents();
         init();
@@ -32,15 +38,15 @@ public class DoiMatKhauJDialog extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txt_uname = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        jPasswordField2 = new javax.swing.JPasswordField();
-        jPasswordField3 = new javax.swing.JPasswordField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        txt_upass = new javax.swing.JPasswordField();
+        txt_confirmPass = new javax.swing.JPasswordField();
+        txt_newPass = new javax.swing.JPasswordField();
+        btn_cancel = new javax.swing.JButton();
+        btn_ok = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -50,9 +56,10 @@ public class DoiMatKhauJDialog extends javax.swing.JFrame {
 
         jLabel2.setText("Tên đăng nhập");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txt_uname.setEnabled(false);
+        txt_uname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txt_unameActionPerformed(evt);
             }
         });
 
@@ -62,15 +69,25 @@ public class DoiMatKhauJDialog extends javax.swing.JFrame {
 
         jLabel5.setText("Xác nhận mật khẩu mới");
 
-        jPasswordField2.addActionListener(new java.awt.event.ActionListener() {
+        txt_confirmPass.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jPasswordField2ActionPerformed(evt);
+                txt_confirmPassActionPerformed(evt);
             }
         });
 
-        jButton1.setText("HỦY BỎ");
+        btn_cancel.setText("HỦY BỎ");
+        btn_cancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cancelActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("ĐỒNG Ý");
+        btn_ok.setText("ĐỒNG Ý");
+        btn_ok.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_okActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -79,19 +96,19 @@ public class DoiMatKhauJDialog extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton2)
+                        .addComponent(btn_ok)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1))
+                        .addComponent(btn_cancel))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel1)
                                     .addComponent(jLabel3)
-                                    .addComponent(jPasswordField3, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txt_newPass, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                     .addContainerGap()
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(txt_uname, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jLabel2)))
@@ -100,8 +117,8 @@ public class DoiMatKhauJDialog extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel4)
                                 .addComponent(jLabel5)
-                                .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPasswordField2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(txt_upass, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_confirmPass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -120,34 +137,44 @@ public class DoiMatKhauJDialog extends javax.swing.JFrame {
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(txt_upass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txt_uname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addGap(26, 26, 26)))
                         .addGap(38, 38, 38)
-                        .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txt_confirmPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPasswordField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txt_newPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(btn_cancel)
+                    .addComponent(btn_ok))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txt_unameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_unameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txt_unameActionPerformed
 
-    private void jPasswordField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField2ActionPerformed
+    private void txt_confirmPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_confirmPassActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jPasswordField2ActionPerformed
+    }//GEN-LAST:event_txt_confirmPassActionPerformed
+
+    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btn_cancelActionPerformed
+
+    private void btn_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_okActionPerformed
+        if (validateForm()) {
+            this.dispose();
+        }
+    }//GEN-LAST:event_btn_okActionPerformed
 
     /**
      * @param args the command line arguments
@@ -186,21 +213,56 @@ public class DoiMatKhauJDialog extends javax.swing.JFrame {
 
     private void init() {
         this.setLocationRelativeTo(null);
-        this.setIconImage(XImage.getAppIcon());
+        this.setIconImage(ShareHelper.APP_ICON);
         setTitle("");
+        txt_uname.setText(ShareHelper.USER.getMaNV());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btn_cancel;
+    private javax.swing.JButton btn_ok;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JPasswordField jPasswordField2;
-    private javax.swing.JPasswordField jPasswordField3;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JPasswordField txt_confirmPass;
+    private javax.swing.JPasswordField txt_newPass;
+    private javax.swing.JTextField txt_uname;
+    private javax.swing.JPasswordField txt_upass;
     // End of variables declaration//GEN-END:variables
+
+    boolean validateForm() {
+        String username = txt_uname.getText();
+        String password = new String(txt_upass.getPassword());
+        String newPassword = new String(txt_newPass.getPassword());
+        String confirmPassword = new String(txt_confirmPass.getPassword());
+
+        nv = nhanVienDAO.selectById(username);
+        if (password.isBlank() || newPassword.isBlank() || confirmPassword.isBlank()) {
+            DialogHelper.alert(this, "Không được để trống mật khẩu");
+            return false;
+        }
+        String matKhau = nv.getMatKhau();
+        if (!password.equals(matKhau)) {
+            DialogHelper.alert(this, "Sai mật khẩu");
+            return false;
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            DialogHelper.alert(this, "Mật khẩu xác nhận không khớp");
+            return false;
+        }
+        if (newPassword.equals(matKhau)) {
+            DialogHelper.alert(this, "Mật khẩu mới trùng mật khẩu cũ");
+            return false;
+        }
+        nv.setMatKhau(newPassword);
+        try {
+            nhanVienDAO.update(nv);
+            DialogHelper.alert(this, "Đổi mật khẩu thành công");
+        } catch (Exception e) {
+            DialogHelper.alert(this, "Lỗi truy cập CSDL");
+        }
+        return true;
+    }
 }

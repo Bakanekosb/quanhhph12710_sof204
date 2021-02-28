@@ -9,7 +9,6 @@ import com.edusys.DAO.NhanVienDAO;
 import com.edusys.helper.DialogHelper;
 import com.edusys.helper.ShareHelper;
 import com.edusys.model.NhanVien;
-import com.edusys.helper.XImage;
 import java.awt.Color;
 
 /**
@@ -194,7 +193,7 @@ public class DangNhapJFrame extends javax.swing.JFrame {
 
     private void init() {
         this.setLocationRelativeTo(null);
-        this.setIconImage(XImage.getAppIcon());
+        this.setIconImage(ShareHelper.APP_ICON);
         setTitle("HỆ THỐNG QUẢN LÝ ĐÀO TẠO");
         getContentPane().setBackground(Color.white);
     }

@@ -5,6 +5,7 @@
  */
 package com.edusys.DAO;
 
+
 import com.edusys.model.NguoiHoc;
 import com.edusys.model.NhanVien;
 import java.util.List;
@@ -21,11 +22,7 @@ public class NewJFrame extends javax.swing.JFrame {
      */
     public NewJFrame() {
         initComponents();
-        NguoiHocDAO nhDAO = new NguoiHocDAO();
-        List<NguoiHoc> lst = nhDAO.selectByKeyword("a");
-        for (NguoiHoc x : lst) {
-            System.out.println(x.getHoTen());
-        }
+        
     }
 
     /**

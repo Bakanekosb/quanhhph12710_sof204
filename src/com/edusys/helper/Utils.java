@@ -11,15 +11,19 @@ import com.edusys.model.ChuyenDe;
 import com.edusys.model.HocVien;
 import com.edusys.model.KhoaHoc;
 import com.edusys.model.NguoiHoc;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JTextField;
 
 /**
  *
  * @author Dell
  */
-public class Utils {  
-    
+public class Utils {
+
     KhoaHocDAO khoaHocDAO = new KhoaHocDAO();
     ChuyenDeDAO chuyenDeDAO = new ChuyenDeDAO();
     List<KhoaHoc> lst_khoaHoc = new ArrayList<>();
@@ -27,10 +31,13 @@ public class Utils {
     List<NguoiHoc> lst_nguoiHoc = new ArrayList<>();
     List<HocVien> lst_hocVien = new ArrayList<>();
     KhoaHoc kh;
-    
-    public String getTenKH(int id){
+
+    public String getTenKH(int id) {
         kh = khoaHocDAO.selectById(id);
         String tenCD = chuyenDeDAO.selectById(kh.getMaCD()).getTenCD();
-        return tenCD + " (" + DateHelper.toString(kh.getNgayKG()) + ")";
-    }    
+        return tenCD + " (" + DateHelper.toString(kh.getNgayKG()) + ") " + "MaKH: " + kh.getMaKH();
+    }
+
+   
+
 }

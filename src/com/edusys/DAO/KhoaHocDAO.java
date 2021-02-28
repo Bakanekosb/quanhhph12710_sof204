@@ -9,6 +9,7 @@ package com.edusys.DAO;
  *
  * @author Dell
  */
+import com.edusys.Interface.IEduSysDAO;
 import com.edusys.helper.JdbcHelper;
 import com.edusys.model.KhoaHoc;
 import java.sql.ResultSet;
@@ -16,11 +17,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KhoaHocDAO extends EduSysDAO<KhoaHoc, Integer>{
+public class KhoaHocDAO implements IEduSysDAO<KhoaHoc, Integer>{
 
     @Override
     public void insert(KhoaHoc model) {
-        insert_sql = "INSERT INTO KhoaHoc (MaCD, HocPhi, ThoiLuong, NgayKG, GhiChu, MaNV) VALUES (?, ?, ?, ?, ?,?)";
+        String insert_sql = "INSERT INTO KhoaHoc (MaCD, HocPhi, ThoiLuong, NgayKG, GhiChu, MaNV) VALUES (?, ?, ?, ?, ?, ?)";
+        System.out.println(model.toString());
         JdbcHelper.executeUpdate(insert_sql,
                 model.getMaCD(),
                 model.getHocPhi(),
@@ -32,7 +34,7 @@ public class KhoaHocDAO extends EduSysDAO<KhoaHoc, Integer>{
 
     @Override
     public void update(KhoaHoc model) {
-        update_sql = "UPDATE KhoaHoc SET MaCD=?, HocPhi=?, ThoiLuong=?, NgayKG=?, GhiChu=?, MaNV=? WHERE MaKH=?";
+       String  update_sql = "UPDATE KhoaHoc SET MaCD=?, HocPhi=?, ThoiLuong=?, NgayKG=?, GhiChu=?, MaNV=? WHERE MaKH=?";
         JdbcHelper.executeUpdate(update_sql,
                 model.getMaCD(),
                 model.getHocPhi(),
@@ -45,31 +47,31 @@ public class KhoaHocDAO extends EduSysDAO<KhoaHoc, Integer>{
 
     @Override
     public void delete(Integer id) {
-        delete_sql = "DELETE FROM KhoaHoc WHERE MaKH=?";
+      String   delete_sql = "DELETE FROM KhoaHoc WHERE MaKH=?";
         JdbcHelper.executeUpdate(delete_sql, id);
     }
     
     @Override
     public KhoaHoc selectById(Integer id) {
-        selectById_sql = "SELECT * FROM KhoaHoc WHERE MaKH=?";
+       String  selectById_sql = "SELECT * FROM KhoaHoc WHERE MaKH=?";
         List<KhoaHoc> list = selectBySql(selectById_sql, id);
         return list.isEmpty() ? null : list.get(0);
     }
     
     public List<KhoaHoc> selectByMaCD(String maCD) {
-        selectById_sql = "SELECT * FROM KhoaHoc WHERE MaCD=?";
+      String   selectById_sql = "SELECT * FROM KhoaHoc WHERE MaCD=?";
         List<KhoaHoc> list = selectBySql(selectById_sql, maCD);
         return list.isEmpty() ? null : list;
     }
 
     @Override
     public List<KhoaHoc> selectAll() {
-        selectAll_sql = "SELECT * FROM KhoaHoc";
+       String  selectAll_sql = "SELECT * FROM KhoaHoc";
         return selectBySql(selectAll_sql);
     }
 
     @Override
-    protected List<KhoaHoc> selectBySql(String sql, Object... args) {
+    public List<KhoaHoc> selectBySql(String sql, Object... args) {
         List<KhoaHoc> list = new ArrayList<>();
         try {
             ResultSet rs = null;

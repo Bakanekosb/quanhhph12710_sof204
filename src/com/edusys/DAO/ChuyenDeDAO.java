@@ -9,6 +9,7 @@ package com.edusys.DAO;
  *
  * @author Dell
  */
+import com.edusys.Interface.IEduSysDAO;
 import com.edusys.helper.JdbcHelper;
 import com.edusys.model.ChuyenDe;
 import java.sql.ResultSet;
@@ -16,11 +17,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChuyenDeDAO extends EduSysDAO<ChuyenDe, String> {
+public class ChuyenDeDAO implements IEduSysDAO<ChuyenDe, String> {
     
     @Override
     public void insert(ChuyenDe model) {
-        insert_sql = "INSERT INTO ChuyenDe (MaCD, TenCD, HocPhi, ThoiLuong, Hinh, MoTa) VALUES (?, ?, ?, ?, ?, ?)";
+        String insert_sql = "INSERT INTO ChuyenDe (MaCD, TenCD, HocPhi, ThoiLuong, Hinh, MoTa) VALUES (?, ?, ?, ?, ?, ?)";
         JdbcHelper.executeUpdate(insert_sql,
                 model.getMaCD(),
                 model.getTenCD(),
@@ -32,7 +33,7 @@ public class ChuyenDeDAO extends EduSysDAO<ChuyenDe, String> {
 
     @Override
     public void update(ChuyenDe model) {
-        update_sql = "UPDATE ChuyenDe SET TenCD=?, HocPhi=?, ThoiLuong=?, Hinh=?, MoTa=? WHERE MaCD=?";
+        String update_sql = "UPDATE ChuyenDe SET TenCD=?, HocPhi=?, ThoiLuong=?, Hinh=?, MoTa=? WHERE MaCD=?";
         JdbcHelper.executeUpdate(update_sql,
                 model.getTenCD(),
                 model.getHocPhi(),
@@ -44,25 +45,25 @@ public class ChuyenDeDAO extends EduSysDAO<ChuyenDe, String> {
 
     @Override
     public void delete(String id) {
-        delete_sql = "DELETE FROM ChuyenDe WHERE MaCD=?";
+        String delete_sql = "DELETE FROM ChuyenDe WHERE MaCD=?";
         JdbcHelper.executeUpdate(delete_sql, id);
     }
 
     @Override
     public ChuyenDe selectById(String id) {
-        selectById_sql = "SELECT * FROM ChuyenDe WHERE MaCD=?";
+        String selectById_sql = "SELECT * FROM ChuyenDe WHERE MaCD=?";
         List<ChuyenDe> list = selectBySql(selectById_sql, id);
         return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
     public List<ChuyenDe> selectAll() {
-        selectAll_sql = "SELECT * FROM ChuyenDe";
+        String selectAll_sql = "SELECT * FROM ChuyenDe";
         return selectBySql(selectAll_sql);
     }
 
     @Override
-    protected List<ChuyenDe> selectBySql(String sql, Object... args) {
+    public List<ChuyenDe> selectBySql(String sql, Object... args) {
         List<ChuyenDe> list = new ArrayList<>();
         try {
             ResultSet rs = null;
@@ -80,6 +81,12 @@ public class ChuyenDeDAO extends EduSysDAO<ChuyenDe, String> {
         }
         return list;
     }  
+    
+     public ChuyenDe selectByName(String name) {
+        String selectById_sql = "SELECT * FROM ChuyenDe WHERE TenCD=?";
+        List<ChuyenDe> list = selectBySql(selectById_sql, name);
+        return list.isEmpty() ? null : list.get(0);
+    }
        
 
     private ChuyenDe readFromResultSet(ResultSet rs) throws SQLException {

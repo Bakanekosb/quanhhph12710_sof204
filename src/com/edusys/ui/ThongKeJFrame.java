@@ -7,12 +7,27 @@ package com.edusys.ui;
 
 import com.edusys.DAO.ChuyenDeDAO;
 import com.edusys.DAO.KhoaHocDAO;
+import com.edusys.DAO.ThongKeDAO;
+import com.edusys.helper.ShareHelper;
 import com.edusys.helper.Utils;
 import com.edusys.model.KhoaHoc;
-import com.edusys.helper.XImage;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  *
@@ -29,8 +44,14 @@ public class ThongKeJFrame extends javax.swing.JFrame {
     DefaultTableModel tblModel_doanhThu = new DefaultTableModel(new String[]{"TÊN CHUYÊN ĐỀ", "SL KH", "SL HV", "DOANH THU", "HP CAO NHẤT", "HP THẤP NHẤT", "HP TB"}, 0);
     KhoaHocDAO khoaHocDAO = new KhoaHocDAO();
     ChuyenDeDAO chuyenDeDAO = new ChuyenDeDAO();
+    ThongKeDAO thongKeDAO = new ThongKeDAO();
+    List<KhoaHoc> lst_khoaHoc = new ArrayList<>();
 
-    public ThongKeJFrame() {
+    List<Object[]> lst_nguoiHocTheoNam = new ArrayList<>();
+    int maKH = -1;
+    int nam = -1;
+
+    public ThongKeJFrame() throws IOException {
         initComponents();
         init();
     }
@@ -49,6 +70,7 @@ public class ThongKeJFrame extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_nguoiHoc = new javax.swing.JTable();
+        lbl_bieuDo = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         cbo_khoaHoc = new javax.swing.JComboBox<>();
@@ -87,15 +109,19 @@ public class ThongKeJFrame extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lbl_bieuDo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbl_bieuDo, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -104,6 +130,16 @@ public class ThongKeJFrame extends javax.swing.JFrame {
         jLabel2.setText("KHÓA HỌC:");
 
         cbo_khoaHoc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbo_khoaHoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbo_khoaHocActionPerformed(evt);
+            }
+        });
+        cbo_khoaHoc.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                cbo_khoaHocPropertyChange(evt);
+            }
+        });
 
         tbl_bangDiem.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -140,7 +176,7 @@ public class ThongKeJFrame extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(cbo_khoaHoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -171,7 +207,7 @@ public class ThongKeJFrame extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -180,6 +216,11 @@ public class ThongKeJFrame extends javax.swing.JFrame {
         jLabel3.setText("NĂM:");
 
         cbo_nam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbo_nam.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbo_namActionPerformed(evt);
+            }
+        });
 
         tbl_doanhThu.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -230,7 +271,7 @@ public class ThongKeJFrame extends javax.swing.JFrame {
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 447, Short.MAX_VALUE)
+            .addGap(0, 470, Short.MAX_VALUE)
             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel4Layout.createSequentialGroup()
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -258,12 +299,27 @@ public class ThongKeJFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cbo_khoaHocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbo_khoaHocActionPerformed
+        if (maKH != -1) {
+            maKH = lst_khoaHoc.get(cbo_khoaHoc.getSelectedIndex()).getMaKH();
+            loadTable_bangDiem();
+        }
+    }//GEN-LAST:event_cbo_khoaHocActionPerformed
+
+    private void cbo_khoaHocPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cbo_khoaHocPropertyChange
+
+    }//GEN-LAST:event_cbo_khoaHocPropertyChange
+
+    private void cbo_namActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbo_namActionPerformed
+        loadTable_doanhThu();
+    }//GEN-LAST:event_cbo_namActionPerformed
 
     /**
      * @param args the command line arguments
@@ -295,51 +351,92 @@ public class ThongKeJFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ThongKeJFrame().setVisible(true);
+                try {
+                    new ThongKeJFrame().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(ThongKeJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
-    private void init() {
+    private void init() throws IOException {
         this.setLocationRelativeTo(null);
-        this.setIconImage(XImage.getAppIcon());
+        this.setIconImage(ShareHelper.APP_ICON);
         setTitle("");
         tbl_nguoiHoc.setModel(tblModel_nguoiHoc);
         tbl_bangDiem.setModel(tblModel_bangDiem);
         tbl_tongHopDiem.setModel(tblModel_tongHopDiem);
         tbl_doanhThu.setModel(tblModel_doanhThu);
         loadCombobox_khoaHoc();
+        loadCombobox_nam();
+        loadTable_nguoiHoc();
+        if (maKH != -1) {
+            maKH = lst_khoaHoc.get(0).getMaKH();
+            loadTable_bangDiem();
+        }
+        loadTable_tongHopDiem();
+        loadTable_doanhThu();
     }
 
-    void loadTable_nguoiHoc() {
+    void loadTable_nguoiHoc() throws IOException {
+        tblModel_nguoiHoc.setRowCount(0);
+        lst_nguoiHocTheoNam = thongKeDAO.getNguoiHoc();
+        for (Object[] x : lst_nguoiHocTheoNam) {
+            tblModel_nguoiHoc.addRow(x);
+        }
 
+        lbl_bieuDo.setIcon(loadBieuDo_nguoiHoc());
     }
 
     void loadTable_bangDiem() {
-
+        List<Object[]> lst_bangDiemTheoKhoaHoc = thongKeDAO.getBangDiem(maKH);
+        tblModel_bangDiem.setRowCount(0);
+        if (lst_bangDiemTheoKhoaHoc.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Khóa học chưa có học viên");
+            return;
+        }
+        for (Object[] x : lst_bangDiemTheoKhoaHoc) {
+            tblModel_bangDiem.addRow(x);
+        }
     }
 
     void loadTable_tongHopDiem() {
-
+        tblModel_tongHopDiem.setRowCount(0);
+        List<Object[]> lst_tongHopDiem = thongKeDAO.getDiemTheoChuyenDe();
+        for (Object[] x : lst_tongHopDiem) {
+            tblModel_tongHopDiem.addRow(x);
+        }
     }
 
     void loadTable_doanhThu() {
-
+        tblModel_doanhThu.setRowCount(0);
+        List<Object[]> lst_doanhThu = thongKeDAO.getDoanhThu(Integer.parseInt(cbo_nam.getSelectedItem().toString()));
+        for (Object[] x : lst_doanhThu) {
+            tblModel_doanhThu.addRow(x);
+        }
     }
 
     void loadCombobox_khoaHoc() {
-        DefaultComboBoxModel cboModel = (DefaultComboBoxModel) cbo_khoaHoc.getModel();
-        cboModel.removeAllElements();
-        List<KhoaHoc> lst_khoaHoc = khoaHocDAO.selectAll();
+        DefaultComboBoxModel cboModel = new DefaultComboBoxModel();
+        lst_khoaHoc = khoaHocDAO.selectAll();
         for (KhoaHoc x : lst_khoaHoc) {
             cboModel.addElement(new Utils().getTenKH(x.getMaKH()));
         }
+        cbo_khoaHoc.setModel(cboModel);
         cbo_khoaHoc.setSelectedIndex(0);
+        maKH = lst_khoaHoc.get(0).getMaKH();
     }
-    
-    void loadCombobox_nam(){
-        
+
+    void loadCombobox_nam() {
+        DefaultComboBoxModel cboModel = new DefaultComboBoxModel();
+        List<Integer> lst_nam = thongKeDAO.getNamHoc();
+        for (Integer i : lst_nam) {
+            cboModel.addElement(i);
+        }
+        cbo_nam.setModel(cboModel);
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbo_khoaHoc;
@@ -357,10 +454,33 @@ public class ThongKeJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JLabel lbl_bieuDo;
     private javax.swing.JTable tbl_bangDiem;
     private javax.swing.JTable tbl_doanhThu;
     private javax.swing.JTable tbl_nguoiHoc;
     private javax.swing.JTable tbl_tongHopDiem;
     // End of variables declaration//GEN-END:variables
+
+    private ImageIcon loadBieuDo_nguoiHoc() throws IOException {
+        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
+
+        for (int i = 0; i < lst_nguoiHocTheoNam.size(); i++) {
+           line_chart_dataset.addValue((Number) lst_nguoiHocTheoNam.get(i)[1], "soNguoiHoc", (Comparable) lst_nguoiHocTheoNam.get(i)[0]);            
+        }
+        
+        JFreeChart lineChartObject = ChartFactory.createLineChart(
+                "", "Năm",
+                "Số người học",
+                line_chart_dataset, PlotOrientation.VERTICAL,
+                true, true, false);
+
+        int width = 600;
+        /* Width of the image */
+        int height = 220;
+        /* Height of the image */
+        File lineChart = new File("LineChart.jpeg");
+        ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
+        return new ImageIcon("LineChart.jpeg");
+    }
 
 }

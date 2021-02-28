@@ -21,7 +21,7 @@ public class KhoaHoc {
     private Date ngayKG;
     private String ghiChu;
     private String maNV;
-    private Date ngayTao = DateHelper.now();
+    private Date ngayTao;
 
     public KhoaHoc() {
     }
@@ -99,7 +99,11 @@ public class KhoaHoc {
     public void setNgayTao(Date ngayTao) {
         this.ngayTao = ngayTao;
     }
-    
+
+    @Override
+    public String toString() {
+        return "KhoaHoc{" + "maKH=" + maKH + ", maCD=" + maCD + ", hocPhi=" + hocPhi + ", thoiLuong=" + thoiLuong + ", ngayKG=" + ngayKG + ", ghiChu=" + ghiChu + ", maNV=" + maNV + ", ngayTao=" + ngayTao + '}';
+    }  
     
 
 }
